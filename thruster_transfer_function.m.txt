@@ -1,0 +1,36 @@
+% Parameters for the Park 180 Motor
+J = 2.7200e-07;  % Rotor inertia (kg·m^2)
+B = 2.0698e-05;  % Viscous damping coefficient (N·m·s)
+R = 0.91;        % Resistance (Ohms)
+L = 0.00455;     % Inductance (H) Approx
+Kt = 0.00434;    % Torque constant (N·m/A)
+Ke = 0.00434;    % Back EMF constant (V·s/rad)
+
+% Introduce an additional higher-order dynamic term to the denominator
+extra_dynamics = [1e-9, 1e-7]; % Example higher-order coefficients
+
+% Construct the numerator and denominator for higher-order transfer function
+numerator = [Kt*L, Kt*R, Kt]; % Corrected to ensure the s^2 coefficient is positive
+denominator = [J*L, (J*R + B*L), (B*R + Kt*Ke), 0];
+
+% Add higher-order dynamics to denominator
+denominator = [extra_dynamics, denominator];
+
+% Create the transfer function
+sys = tf(numerator, denominator);
+
+% Display the transfer function
+disp('The Transfer Function of the Park 180 Motor (Refined) is:');
+disp(sys);
+
+% Plot the step response
+figure;
+step(sys);
+title('Step Response of the Park 180 Motor (Refined)');
+xlabel('Time (seconds)');
+ylabel('Angular Velocity (rad/s)');
+
+% Plot the Bode response
+figure;
+bode(sys);
+title('Bode Plot of the Park 180 Motor (Refined)');
